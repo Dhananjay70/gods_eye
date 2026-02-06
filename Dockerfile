@@ -12,7 +12,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application
-COPY gods_eye.py .
+COPY gods_eye.py report_template.html ./
 
 # Install Playwright browsers (Chromium only to keep image small)
 RUN playwright install chromium

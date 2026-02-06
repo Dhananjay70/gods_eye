@@ -505,6 +505,7 @@ def expand_cidr(cidr: str, ports: list[int]) -> list[str]:
 
 # =================== Report ===================
 def make_report(cards_html: str, out_path: str, total: int, success: int, warn: int, fail: int, runtime: str, diff_buttons: str = "", diff_summary: str = "") -> None:
+    """Legacy report generator using inline HTML template (fallback)."""
     html_content = HTML_TEMPLATE.format(
         generated_time=time.strftime("%Y-%m-%d %H:%M:%S"),
         cards=cards_html, total=total, success=success, warn=warn, fail=fail, runtime=runtime,
@@ -512,6 +513,66 @@ def make_report(cards_html: str, out_path: str, total: int, success: int, warn: 
     )
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(html_content)
+
+def make_universal_report(results: list[dict], out_path: str, total: int, success: int, warn: int, fail: int, runtime: str) -> None:
+    """Generate report using external template with JSON data injection."""
+    template_path = os.path.join(os.path.dirname(__file__), "report_template.html")
+    if not os.path.isfile(template_path):
+        console.print("[yellow]Warning:[/] report_template.html not found, using legacy template.")
+        return
+
+    with open(template_path, "r", encoding="utf-8") as f:
+        template = f.read()
+
+    scan_data = []
+    for r in results:
+        badges = []
+        if r.get("notes"):
+            badges.append({"text": str(r["notes"]), "type": "default"})
+        hdrs = r.get("headers", {})
+        server = hdrs.get("server", hdrs.get("x-powered-by", ""))
+        if server:
+            badges.append({"text": str(server), "type": "default"})
+        cat = r.get("category", "")
+        if cat:
+            badges.append({"text": str(cat), "type": "cat"})
+        for t in r.get("techs", []):
+            badges.append({"text": str(t), "type": "tech"})
+
+        redirects = r.get("redirect_chain", [])
+
+        tls_str = ""
+        tls = r.get("tls", {})
+        if tls.get("issuer"):
+            tls_str = f"TLS: {tls['issuer']} | {tls.get('protocol', '')}"
+
+        item = {
+            "url": r.get("url", ""),
+            "img": r.get("screenshot_path", r.get("screenshot", "")).replace("\\", "/"),
+            "status": str(r.get("status", "0"))[0] if isinstance(r.get("status"), int) else "E",
+            "statusCode": str(r.get("status", "")),
+            "load": f"{r.get('load_ms', 0)} ms",
+            "grade": r.get("sec_grade", "F"),
+            "title": r.get("title", ""),
+            "badges": badges,
+            "redirects": redirects,
+            "tls": tls_str,
+            "cat": cat,
+            "diff": r.get("diff_pct", 0),
+        }
+        scan_data.append(item)
+
+    stats = {
+        "generated": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "total": total, "success": success, "warn": warn, "fail": fail, "runtime": runtime,
+    }
+
+    final_html = template.replace("const scanData = __SCAN_DATA__;", f"const scanData = {json.dumps(scan_data)};")
+    final_html = final_html.replace("const scanStats = __SCAN_STATS__;", f"const scanStats = {json.dumps(stats)};")
+
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write(final_html)
+
 
 def classify_status_color(code: int | str) -> str:
     try:
@@ -1157,7 +1218,8 @@ def main() -> None:
         )
 
     report_path = os.path.join(args.out, "report.html")
-    make_report(cards_html, report_path, total, success, warn, fail, runtime, diff_buttons, diff_summary)
+    # make_report(cards_html, report_path, total, success, warn, fail, runtime, diff_buttons, diff_summary)
+    make_universal_report(results, report_path, total, success, warn, fail, runtime)
     console.print(f"[green bold]Report saved to:[/] {report_path}")
 
     if args.json or args.resume:
