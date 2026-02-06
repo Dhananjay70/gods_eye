@@ -387,7 +387,7 @@
         #infoModal.show { opacity: 1; }
         .modal-content {
             background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 24px; max-width: 520px; width: 90%;
+            border-radius: 12px; padding: 24px; max-width: 860px; width: 92%;
             max-height: 70vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
         }
         .modal-header {
@@ -415,6 +415,10 @@
         .modal-redirect-step {
             font-family: 'JetBrains Mono', monospace; font-size: 11px;
             display: flex; align-items: center; gap: 8px; margin-bottom: 4px; color: var(--text-muted);
+            overflow: hidden;
+        }
+        .modal-redirect-step a {
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
         .modal-redirect-arrow { font-size: 10px; opacity: 0.3; margin-left: 16px; margin-bottom: 4px; }
         .modal-detail { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); }
