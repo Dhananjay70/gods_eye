@@ -367,6 +367,58 @@
             border-top: 1px solid rgba(255, 255, 255, 0.03);
         }
 
+        /* Info Button */
+        .info-btn {
+            width: 28px; height: 28px; border-radius: 50%; padding: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700; font-family: serif;
+            background: rgba(255,255,255,0.05); color: var(--text-muted);
+            border: 1px solid rgba(255,255,255,0.1); text-transform: none;
+        }
+        .info-btn:hover { background: rgba(0,230,168,0.15); color: var(--accent); border-color: var(--accent); }
+
+        /* Info Modal */
+        #infoModal {
+            display: none; position: fixed; inset: 0; z-index: 3000;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        #infoModal.show { opacity: 1; }
+        .modal-content {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 24px; max-width: 520px; width: 90%;
+            max-height: 70vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);
+        }
+        .modal-header h3 {
+            margin: 0; font-family: 'Orbitron', sans-serif; font-size: 14px;
+            color: var(--accent); letter-spacing: 1px;
+        }
+        .modal-close {
+            width: 30px; height: 30px; border-radius: 50%; padding: 0;
+            font-size: 18px; display: flex; align-items: center; justify-content: center;
+            text-transform: none;
+        }
+        .modal-url {
+            font-family: 'JetBrains Mono', monospace; font-size: 12px;
+            color: var(--accent); margin-bottom: 16px; word-break: break-all;
+        }
+        .modal-section { margin-bottom: 14px; }
+        .modal-section-title {
+            font-size: 9px; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-muted); opacity: 0.6; margin-bottom: 8px;
+        }
+        .modal-redirect-step {
+            font-family: 'JetBrains Mono', monospace; font-size: 11px;
+            display: flex; align-items: center; gap: 8px; margin-bottom: 4px; color: var(--text-muted);
+        }
+        .modal-redirect-arrow { font-size: 10px; opacity: 0.3; margin-left: 16px; margin-bottom: 4px; }
+        .modal-detail { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); }
+
         /* Footer */
         .footer {
             margin-top: 60px;
@@ -487,6 +539,7 @@
 
     <button onclick="topFunction()" id="topBtn" title="Back to top">&#8593;</button>
     <div id="lightbox"><img id="lightbox-img" src=""></div>
+    <div id="infoModal"><div class="modal-content" id="modalBody"></div></div>
 
     <script>
         // PLACEHOLDER VARIABLES - These will be replaced by the python script
@@ -522,19 +575,10 @@
                     return `<div class="${cls}">${b.text}</div>`;
                 }).join('');
 
-                // Redirects HTML
-                let redirectHtml = '';
-                if (d.redirects && d.redirects.length > 0) {
-                    const steps = d.redirects.map((url, i) => {
-                        const isLast = i === d.redirects.length - 1;
-                        const icon = i === 0 ? '●' : '↳';
-                        const arrow = !isLast ? '<div class="redirect-arrow">↓</div>' : '';
-                        return `<div class="redirect-step">
-                      <span class="redirect-icon">${icon}</span>
-                      <a href="${url}" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.1)">${url}</a>
-                    </div>${arrow}`;
-                    }).join('');
-                    redirectHtml = `<div class="redirect-flow"><div class="redirect-title">REDIRECT PATH</div>${steps}</div>`;
+                // Info button (shown when redirects or TLS data exist)
+                let infoBtnHtml = '';
+                if ((d.redirects && d.redirects.length > 0) || d.tls) {
+                    infoBtnHtml = `<button class="info-btn" onclick='openInfoModal(${JSON.stringify(JSON.stringify(d))})' title="View details">i</button>`;
                 }
 
                 const html = `
@@ -555,9 +599,10 @@
             ${badgesHtml}
         </div>
         
-        ${redirectHtml}
-        
-        <div class="tls-info">${d.tls}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            ${infoBtnHtml}
+            <div class="tls-info" style="margin-top:0;padding-top:0;border-top:none;flex:1;">${d.tls}</div>
+        </div>
       </div>
     `;
 
@@ -639,8 +684,44 @@
             lightbox.classList.remove('show');
             setTimeout(() => { lightbox.style.display = 'none'; lightImg.src = ''; }, 300);
         }
-        window.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+        window.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closeInfoModal(); } });
         window.addEventListener('click', e => { if (e.target == lightbox) closeLightbox(); });
+
+        // Info Modal
+        const infoModal = document.getElementById('infoModal');
+        function openInfoModal(jsonStr) {
+            const d = JSON.parse(jsonStr);
+            let html = `<div class="modal-header"><h3>TARGET INFO</h3><button class="modal-close" onclick="closeInfoModal()">&times;</button></div>`;
+            html += `<div class="modal-url">${d.url}</div>`;
+
+            // Redirect path
+            if (d.redirects && d.redirects.length > 0) {
+                html += `<div class="modal-section"><div class="modal-section-title">Redirect Path</div>`;
+                d.redirects.forEach((url, i) => {
+                    const icon = i === 0 ? '●' : '↳';
+                    html += `<div class="modal-redirect-step"><span style="opacity:0.3;font-size:9px">${icon}</span><a href="${url}" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.1)">${url}</a></div>`;
+                    if (i < d.redirects.length - 1) html += `<div class="modal-redirect-arrow">↓</div>`;
+                });
+                html += `</div>`;
+            }
+
+            // TLS info
+            if (d.tls) {
+                html += `<div class="modal-section"><div class="modal-section-title">TLS Certificate</div><div class="modal-detail">${d.tls}</div></div>`;
+            }
+
+            // Status & grade
+            html += `<div class="modal-section"><div class="modal-section-title">Status</div><div class="modal-detail">HTTP ${d.statusCode || d.status} &nbsp;|&nbsp; Grade: ${d.grade || 'N/A'} &nbsp;|&nbsp; Load: ${d.load || 'N/A'}</div></div>`;
+
+            document.getElementById('modalBody').innerHTML = html;
+            infoModal.style.display = 'flex';
+            setTimeout(() => infoModal.classList.add('show'), 10);
+        }
+        function closeInfoModal() {
+            infoModal.classList.remove('show');
+            setTimeout(() => { infoModal.style.display = 'none'; }, 300);
+        }
+        infoModal.addEventListener('click', e => { if (e.target === infoModal) closeInfoModal(); });
 
         document.addEventListener('DOMContentLoaded', () => {
             // If placeholders are not replaced (checking for literal text)
