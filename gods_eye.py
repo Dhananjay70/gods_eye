@@ -881,6 +881,7 @@ def main() -> None:
     console.print(BANNER.format(version=__version__))
 
     parser = argparse.ArgumentParser(
+        usage=argparse.SUPPRESS,
         description="Gods Eye - Parallel Web Reconnaissance Screenshot Tool",
         epilog="Pipe URLs via stdin: cat urls.txt | python gods_eye.py -o out_dir",
     )
