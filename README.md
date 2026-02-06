@@ -5,7 +5,7 @@ A powerful parallel web reconnaissance screenshot tool with beautiful dark-theme
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Platform](https://img.shields.io/badge/platform-linux%20%7C%20macos%20%7C%20windows-lightgrey.svg)
-![CI](https://github.com/gods-eye-tool/gods-eye/actions/workflows/ci.yml/badge.svg)
+[![CI](https://github.com/Dhananjay70/gods_eye/actions/workflows/ci.yml/badge.svg)](https://github.com/Dhananjay70/gods_eye/actions/workflows/ci.yml)
 ![Version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)
 
 ## Why Gods Eye?
