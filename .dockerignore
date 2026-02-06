@@ -1,0 +1,28 @@
+# Scan output directories
+gods_eye_report/
+scan*/
+*_report/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docs (not needed in image)
+README.md
+LICENSE

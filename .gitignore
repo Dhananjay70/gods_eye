@@ -1,0 +1,39 @@
+# Scan output directories
+gods_eye_report/
+scan*/
+*_report/
+diffs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets
+.env
+*.pem
+*.key
+
+# Logs
+*.log

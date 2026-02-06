@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gods-eye"
+version = "1.0.0"
+description = "Parallel Web Reconnaissance Screenshot Tool with security grading, tech fingerprinting, and change detection"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Gods Eye Contributors"},
+]
+keywords = ["recon", "screenshot", "security", "osint", "web", "pentesting"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: Internet :: WWW/HTTP",
+]
+dependencies = [
+    "playwright>=1.40.0",
+    "rich>=13.0.0",
+    "Pillow>=10.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/gods-eye-tool/gods-eye"
+Repository = "https://github.com/gods-eye-tool/gods-eye"
+Issues = "https://github.com/gods-eye-tool/gods-eye/issues"
+
+[project.scripts]
+gods-eye = "gods_eye:main"
+
+[tool.setuptools]
+py-modules = ["gods_eye"]
