@@ -8,7 +8,7 @@ A powerful parallel web reconnaissance screenshot tool with beautiful dark-theme
 [![CI](https://github.com/Dhananjay70/gods_eye/actions/workflows/ci.yml/badge.svg)](https://github.com/Dhananjay70/gods_eye/actions/workflows/ci.yml)
 ![Version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)
 
-![gods_eye](ReconPro.png)
+![gods_eye](gods_eye.png)
 ## Why Gods Eye?
 
 Gods Eye goes beyond simple screenshotting. While tools like Aquatone, EyeWitness, and gowitness capture pages, Gods Eye delivers **actionable intelligence** with every scan:
