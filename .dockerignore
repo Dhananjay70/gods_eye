@@ -23,6 +23,5 @@ Thumbs.db
 .git/
 .gitignore
 
-# Docs (not needed in image)
-README.md
+# Docs
 LICENSE

@@ -1,14 +1,4 @@
 # Gods Eye - Parallel Web Reconnaissance Screenshot Tool
-# Multi-stage build for minimal final image
-
-# ── Stage 1: Build ──────────────────────────────────────────────
-FROM python:3.12-slim AS builder
-
-WORKDIR /build
-COPY pyproject.toml requirements.txt gods_eye.py ./
-RUN pip install --no-cache-dir --prefix=/install .
-
-# ── Stage 2: Runtime ────────────────────────────────────────────
 FROM mcr.microsoft.com/playwright/python:v1.49.1-noble
 
 LABEL maintainer="Gods Eye Contributors"
@@ -17,8 +7,9 @@ LABEL version="1.0.0"
 
 WORKDIR /app
 
-# Copy installed packages from builder
-COPY --from=builder /install /usr/local
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application
 COPY gods_eye.py .
