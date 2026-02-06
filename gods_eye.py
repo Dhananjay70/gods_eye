@@ -45,7 +45,9 @@ BANNER = r"""[bold cyan]
   ██   ███ ██    ██ ██   ██ ███████     █████     ████   █████
   ██    ██ ██    ██ ██   ██      ██     ██         ██    ██
    ██████   ██████  ██████  ███████     ███████    ██    ███████
-[/][dim]  v{version} | Parallel Web Reconnaissance Screenshot Tool[/]
+[/]
+[dim]  v{version} | Parallel Web Reconnaissance Screenshot Tool
+  by Dhananjay Pathak[/]
 """
 
 # =================== HTML TEMPLATE ===================
