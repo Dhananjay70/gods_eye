@@ -641,4 +641,4 @@ This tool is for authorized security testing and educational purposes only. The 
 
 ## Support
 
-<a href="https://www.buymeacoffee.com/gods_eye"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=gods_eye&button_colour=40DCA5&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" /></a>
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white)](https://www.buymeacoffee.com/gods_eye)
