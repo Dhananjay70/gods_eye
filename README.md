@@ -638,3 +638,7 @@ This tool is for authorized security testing and educational purposes only. The 
 **Made with love for the security community**
 
 *If you find this tool useful, consider giving it a star on GitHub!*
+
+## Support
+
+<a href="https://www.buymeacoffee.com/gods_eye"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=gods_eye&button_colour=40DCA5&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" /></a>
