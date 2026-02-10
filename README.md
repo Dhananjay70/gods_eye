@@ -15,7 +15,7 @@ Gods Eye goes beyond simple screenshotting. While tools like Aquatone, EyeWitnes
 
 | Feature | Gods Eye | Aquatone | EyeWitness | gowitness |
 |---------|:--------:|:--------:|:----------:|:---------:|
-| Parallel async screenshots | Yes | Yes | Yes | Ye |
+| Parallel async screenshots | Yes | Yes | Yes | Yes |
 | Security header grading (A-F) | **Yes** | No | No | No |
 | Screenshot diff / change detection | **Yes** | No | No | No |
 | Heatmap + side-by-side diff images | **Yes** | No | No | No |
