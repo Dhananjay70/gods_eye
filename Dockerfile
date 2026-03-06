@@ -35,7 +35,7 @@ USER godseye
 EXPOSE 8000
 
 # Default: show help
-# Usage: docker run gods-eye openclaw serve
-#        docker run gods-eye python gods_eye.py -f urls.txt
-ENTRYPOINT []
-CMD ["python", "-m", "openclaw.cli", "--help"]
+# Usage: docker run gods-eye -m openclaw.cli serve
+#        docker run gods-eye gods_eye.py -f urls.txt
+ENTRYPOINT ["python"]
+CMD ["-m", "openclaw.cli", "--help"]
