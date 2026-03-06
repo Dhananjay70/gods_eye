@@ -4,17 +4,17 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gods-eye"
-version = "1.0.0"
-description = "Parallel Web Reconnaissance Screenshot Tool with security grading, tech fingerprinting, and change detection"
+version = "1.1.0"
+description = "Parallel Web Reconnaissance Screenshot Tool with Openclaw compliance platform"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
-    {name = "Gods Eye Contributors"},
+    {name = "Dhananjay Pathak"},
 ]
-keywords = ["recon", "screenshot", "security", "osint", "web", "pentesting"]
+keywords = ["recon", "screenshot", "security", "osint", "web", "pentesting", "compliance", "disclosure"]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Information Technology",
     "Intended Audience :: Developers",
@@ -29,18 +29,35 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP",
 ]
 dependencies = [
+    # Gods Eye core
     "playwright>=1.40.0",
     "rich>=13.0.0",
     "Pillow>=10.0.0",
+    # Openclaw
+    "sqlalchemy[asyncio]>=2.0.0",
+    "aiosqlite>=0.20.0",
+    "click>=8.1.0",
+    "python-dotenv>=1.0.0",
+    "anthropic>=0.40.0",
+    "httpx>=0.27.0",
+    "jinja2>=3.1.0",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.12",
+    "websockets>=13.0",
 ]
 
 [project.urls]
-Homepage = "https://github.com/gods-eye-tool/gods-eye"
-Repository = "https://github.com/gods-eye-tool/gods-eye"
-Issues = "https://github.com/gods-eye-tool/gods-eye/issues"
+Homepage = "https://github.com/Dhananjay70/gods_eye"
+Repository = "https://github.com/Dhananjay70/gods_eye"
+Issues = "https://github.com/Dhananjay70/gods_eye/issues"
 
 [project.scripts]
 gods-eye = "gods_eye:main"
+openclaw = "openclaw.cli:main"
 
 [tool.setuptools]
 py-modules = ["gods_eye"]
+packages = ["openclaw", "openclaw.bridge", "openclaw.onsa", "openclaw.cops", "openclaw.disclosure", "openclaw.portal", "openclaw.portal.routes", "openclaw.db"]

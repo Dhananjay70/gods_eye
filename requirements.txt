@@ -1,3 +1,26 @@
+# Gods Eye — core dependencies
 playwright>=1.58.0
 rich>=14.0.0
 Pillow>=10.0.0
+
+# Openclaw — Phase 1 (Foundation + ONSA)
+sqlalchemy[asyncio]>=2.0.0
+aiosqlite>=0.20.0
+click>=8.1.0
+python-dotenv>=1.0.0
+
+# Openclaw — Phase 2 (COPS)
+# (no extra deps — uses stdlib + SQLAlchemy)
+
+# Openclaw — Phase 3 (Disclosure Engine)
+anthropic>=0.40.0
+httpx>=0.27.0
+jinja2>=3.1.0
+
+# Openclaw — Phase 4 (Portal)
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+python-multipart>=0.0.12
+websockets>=13.0

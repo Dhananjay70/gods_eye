@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Openclaw — Compliance Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="brand-icon">&#128065;</span>
+            <span class="brand-text">Openclaw</span>
+            <span class="brand-sub">Powered by Gods Eye</span>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="nav-link active" data-section="dashboard">Dashboard</a>
+            <a href="#" class="nav-link" data-section="incidents">Incidents</a>
+            <a href="#" class="nav-link" data-section="scans">Scans</a>
+            <a href="#" class="nav-link" data-section="audit">Audit Trail</a>
+        </div>
+        <div class="nav-user">
+            <span id="user-role" class="role-badge">ANALYST</span>
+            <span id="user-name">analyst</span>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <h1>Compliance Dashboard</h1>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-incidents">0</div>
+                    <div class="stat-label">Active Incidents</div>
+                </div>
+                <div class="stat-card stat-warning">
+                    <div class="stat-value" id="stat-material">0</div>
+                    <div class="stat-label">Material Likely</div>
+                </div>
+                <div class="stat-card stat-success">
+                    <div class="stat-value" id="stat-scans">0</div>
+                    <div class="stat-label">Total Scans</div>
+                </div>
+                <div class="stat-card stat-info">
+                    <div class="stat-value" id="stat-chains">0</div>
+                    <div class="stat-label">Audit Chains</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Recent Activity</h2>
+                <div id="activity-feed" class="activity-feed">
+                    <p class="empty-state">No recent activity. Run a scan to get started.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Incidents Section -->
+        <section id="incidents" class="section">
+            <h1>Incidents</h1>
+            <button class="btn btn-primary" onclick="createIncident()">New Incident</button>
+            <div id="incidents-list" class="card-grid"></div>
+        </section>
+
+        <!-- Scans Section -->
+        <section id="scans" class="section">
+            <h1>Scans</h1>
+            <div class="scan-form panel">
+                <h2>Trigger New Scan</h2>
+                <textarea id="scan-urls" placeholder="Enter URLs (one per line)..." rows="5"></textarea>
+                <div class="form-row">
+                    <label>Threads: <input type="number" id="scan-threads" value="5" min="1" max="20"></label>
+                    <label>Mode:
+                        <select id="scan-mode">
+                            <option value="fast">Fast</option>
+                            <option value="balanced" selected>Balanced</option>
+                            <option value="thorough">Thorough</option>
+                        </select>
+                    </label>
+                    <button class="btn btn-primary" onclick="triggerScan()">Run Scan</button>
+                </div>
+            </div>
+            <div id="scans-list" class="card-grid"></div>
+        </section>
+
+        <!-- Audit Section -->
+        <section id="audit" class="section">
+            <h1>Audit Trail (ONSA)</h1>
+            <div id="chains-list" class="card-grid"></div>
+        </section>
+    </main>
+
+    <script>
+        const API = '';
+        let token = '';
+
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                link.classList.add('active');
+                document.getElementById(link.dataset.section).classList.add('active');
+            });
+        });
+
+        // Auth
+        async function login(username, password) {
+            const form = new URLSearchParams();
+            form.append('username', username);
+            form.append('password', password);
+            const resp = await fetch(`${API}/api/auth/login`, {method: 'POST', body: form});
+            const data = await resp.json();
+            token = data.access_token;
+            localStorage.setItem('token', token);
+            await loadUserInfo();
+        }
+
+        async function loadUserInfo() {
+            const resp = await fetch(`${API}/api/auth/me`, {headers: {'Authorization': `Bearer ${token}`}});
+            if (resp.ok) {
+                const user = await resp.json();
+                document.getElementById('user-name').textContent = user.username;
+                document.getElementById('user-role').textContent = user.role.toUpperCase();
+            }
+        }
+
+        // Auto-login with demo credentials
+        token = localStorage.getItem('token') || '';
+        if (!token) { login('admin', 'openclaw'); }
+        else { loadUserInfo(); }
+
+        async function api(path, options = {}) {
+            const headers = {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...options.headers};
+            return fetch(`${API}${path}`, {...options, headers});
+        }
+
+        async function triggerScan() {
+            const urls = document.getElementById('scan-urls').value.split('\n').filter(u => u.trim());
+            const threads = parseInt(document.getElementById('scan-threads').value);
+            const mode = document.getElementById('scan-mode').value;
+            const resp = await api('/api/scans', {
+                method: 'POST',
+                body: JSON.stringify({urls, threads, wait_mode: mode}),
+            });
+            const data = await resp.json();
+            alert(`Scan complete! Score: ${data.materiality_score} (${data.materiality_level})`);
+            loadScans();
+        }
+
+        async function loadScans() {
+            const resp = await api('/api/scans');
+            const scans = await resp.json();
+            document.getElementById('stat-scans').textContent = scans.length;
+        }
+
+        async function loadChains() {
+            const resp = await api('/api/audit/chains');
+            const chains = await resp.json();
+            document.getElementById('stat-chains').textContent = chains.length;
+        }
+
+        // Initial load
+        setTimeout(() => { loadScans(); loadChains(); }, 1000);
+    </script>
+</body>
+</html>
