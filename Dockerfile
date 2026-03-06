@@ -34,6 +34,8 @@ USER godseye
 # Expose portal port
 EXPOSE 8000
 
-# Default: show help. Override with `gods_eye.py` or `openclaw serve`
-ENTRYPOINT ["python", "-m"]
-CMD ["openclaw.cli", "--help"]
+# Default: show help
+# Usage: docker run gods-eye openclaw serve
+#        docker run gods-eye python gods_eye.py -f urls.txt
+ENTRYPOINT []
+CMD ["python", "-m", "openclaw.cli", "--help"]
